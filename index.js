@@ -1,38 +1,19 @@
-const fs = require("fs");
-const path = require("path");
+const logEvents = require("./logEvents");
 
-fs.readFile(
-  path.join(__dirname, "files", "starter.txt"),
-  "utf8",
-  (err, data) => {
-    if (err) throw err;
-    console.log(data);
-  }
-);
+const EventEmitter = require("events");
 
-console.log("Hello...");
+class MyEmitter extends EventEmitter {}
 
-fs.writeFile(
-  path.join(__dirname, "files", "reply.txt"),
-  "This is something you must understand",
-  (err) => {
-    if (err) throw err;
-    console.log("write complete!");
-  }
-);
+// Initialize the object
 
-fs.appendFile(
-  path.join(__dirname, "files", "test.txt"),
-  "Append file creates and writes files at the same time.",
-  (err) => {
-    if (err) throw err;
-    console.log("Append complete!");
-  }
-);
+const myEmitter = new MyEmitter();
 
-// exit on uncaught exception
+// Add listener for the log event
 
-process.on("uncaughtException", (err) => {
-  console.error(`There was an uncaught error: ${err}`);
-  process.exit(1);
-});
+myEmitter.on("log", (msg) => logEvents(msg));
+
+setTimeout(() => {
+  // Emit event
+
+  myEmitter.emit("log", "Log event emitted!");
+}, 2000);
